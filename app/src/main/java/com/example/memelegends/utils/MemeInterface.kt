@@ -12,5 +12,5 @@ interface MemeInterface {
     @POST("/memes/create")
     fun createMeme( @Body meme: Meme): Call<MemeResponse>
     @GET("/memes/all")
-    fun getAll(): Call<MemeResponse>
+    fun getAll(): Call<List<Meme>>
 }

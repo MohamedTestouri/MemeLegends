@@ -6,4 +6,5 @@ class Meme constructor(
     var text: String,
     var createdBy: String,
     var image: String,
+
 )

@@ -41,14 +41,15 @@ memeListView = findViewById(R.id.memeListView)
             .build()
             .create(MemeInterface::class.java)
         var data = ArrayList<Meme>()
-        service.getAll().enqueue(object: Callback<MemeResponse> {
-            override fun onFailure(call: Call<MemeResponse>, t: Throwable) {
+        service.getAll().enqueue(object: Callback<List<Meme>> {
+            override fun onFailure(call: Call<List<Meme>>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error: "+t.toString(), Toast.LENGTH_LONG).show()
             }
-            override fun onResponse(call: Call<MemeResponse>, response: Response<MemeResponse>) {
+            override fun onResponse(call: Call<List<Meme>>, response: Response<List<Meme>>) {
                 if (response.code()==200){
                     Toast.makeText(applicationContext, "get Meme: "+response.body(), Toast.LENGTH_LONG).show()
-                }else Toast.makeText(applicationContext, "Cannot get", Toast.LENGTH_LONG).show()
+                    response.body()?.let { data.addAll(it) }
+                }else Toast.makeText(applicationContext, "Cannot get"+response.body().toString(), Toast.LENGTH_LONG).show()
             }})
       /*  var data = arrayOf("test", "test2")
 var arrayAdapter: ArrayAdapter<String> = ArrayAdapter(this, R.layout.simple_item, data)
@@ -94,8 +95,8 @@ class CustomAdapter(context: Context, data: ArrayList<Meme> = ArrayList()) : Bas
         val meme = getItem(position) as Meme
         textView.text = meme.text
         Picasso.with(context)
-          //  .load(Statics.BASE_URL+"/"+meme.image)
-            .load(meme.image)
+            .load(Statics.BASE_URL+"/uploads/images"+meme.image)
+          //  .load(meme.image)
             .into(imageView);
         return rowView
     }
