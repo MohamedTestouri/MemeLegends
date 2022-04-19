@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.example.memelegends.entities.User
+import com.example.memelegends.utils.Statics
 import com.example.memelegends.utils.UserInterface
 import com.example.memelegends.utils.UserResponse
 import com.squareup.moshi.Json
@@ -39,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
         googlelogin = findViewById(R.id.googlelogin)
         signbtn = findViewById(R.id.signbtn)
         val service = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000")
+            .baseUrl(Statics.getBaseURL())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create(UserInterface::class.java)
