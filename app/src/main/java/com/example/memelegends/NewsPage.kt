@@ -25,7 +25,7 @@ import java.lang.reflect.Array
 
 class NewsPage : AppCompatActivity() {
 
-
+    var data = ArrayList<Meme>()
     private var profilebtn: Button? =null
     private var memeListView: ListView? =null
 
@@ -40,23 +40,25 @@ memeListView = findViewById(R.id.memeListView)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create(MemeInterface::class.java)
-        var data = ArrayList<Meme>()
+
         service.getAll().enqueue(object: Callback<List<Meme>> {
             override fun onFailure(call: Call<List<Meme>>, t: Throwable) {
                 Toast.makeText(applicationContext, "Error: "+t.toString(), Toast.LENGTH_LONG).show()
             }
             override fun onResponse(call: Call<List<Meme>>, response: Response<List<Meme>>) {
                 if (response.code()==200){
-                    Toast.makeText(applicationContext, "get Meme: "+response.body(), Toast.LENGTH_LONG).show()
-                    response.body()?.let { data.addAll(it) }
+                    Toast.makeText(applicationContext, "get Meme: "+response.body().toString(), Toast.LENGTH_LONG).show()
+                   // data = response.body() as ArrayList<Meme>//
+                   // copyData(response.body()!!)
+                    memeListView?.adapter = CustomAdapter(applicationContext,  response.body()!!)
                 }else Toast.makeText(applicationContext, "Cannot get"+response.body().toString(), Toast.LENGTH_LONG).show()
             }})
       /*  var data = arrayOf("test", "test2")
 var arrayAdapter: ArrayAdapter<String> = ArrayAdapter(this, R.layout.simple_item, data)
        */
-
-        data.add(Meme("Test", "Test", "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"))
-        memeListView?.adapter = CustomAdapter(applicationContext,  data)
+Log.d("Body size", data.size.toString())
+       // data.add(Meme("Test", "Test", "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&w=1000&q=80"))
+       // memeListView?.adapter = CustomAdapter(applicationContext,  data)
         profilebtn?.setOnClickListener{
             Handler(Looper.getMainLooper()).postDelayed({
                 val mainIntent = Intent(this, Profile::class.java)
@@ -65,14 +67,20 @@ var arrayAdapter: ArrayAdapter<String> = ArrayAdapter(this, R.layout.simple_item
             }, 1000)
         }
     }
+
+    private fun copyData(body: List<Meme>) {
+      //  data.addAll(body)
+        data = body as ArrayList<Meme>
+        Log.d("Body ", data.size.toString())
+    }
 }
 
-class CustomAdapter(context: Context, data: ArrayList<Meme> = ArrayList()) : BaseAdapter() {
+class CustomAdapter(context: Context, listItem: List<Meme>) : BaseAdapter() {
     private val context : Context
-    private var data : ArrayList<Meme> = ArrayList()
+    private var data : List<Meme>
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     init {
-        this.data = data
+        this.data = listItem
         this.context = context
     }
     override fun getCount(): Int {
@@ -84,7 +92,8 @@ class CustomAdapter(context: Context, data: ArrayList<Meme> = ArrayList()) : Bas
     }
 
     override fun getItem(position: Int): Any {
-        return data[position]
+        Log.d("Body data", data[position].toString())
+        return data.get(position)
     }
 
     override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
@@ -93,10 +102,10 @@ class CustomAdapter(context: Context, data: ArrayList<Meme> = ArrayList()) : Bas
         val imageView = rowView.findViewById(R.id.memeImageView) as ImageView
         val textView = rowView.findViewById(R.id.memeTextView) as TextView
         val meme = getItem(position) as Meme
-        textView.text = meme.text
+        textView.text = meme.text.toString()
         Picasso.with(context)
-            .load(Statics.BASE_URL+"/uploads/images"+meme.image)
-          //  .load(meme.image)
+            .load(Statics.BASE_URL+"/image/"+meme.image.toString())
+           // .load(Statics.BASE_URL+"/image/1645210409355image.png")
             .into(imageView);
         return rowView
     }
