@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.example.memelegends.entities.User
+import com.example.memelegends.utils.Statics
 import com.example.memelegends.utils.UserInterface
 import com.example.memelegends.utils.UserResponse
 import com.squareup.moshi.Json
@@ -39,12 +40,13 @@ class Register : AppCompatActivity() {
         emailTextInput = findViewById(R.id.emailTextInput)
 
         val service = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3000")
+            .baseUrl(Statics.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create(UserInterface::class.java)
 
         registerButton?.setOnClickListener{
+            if (isEmailValid(emailTextInput?.text.toString())){
             if (passwordTextInput?.text.toString().equals(rePasswordTextInput?.text.toString())){
                 // register Ws
              //
@@ -63,9 +65,9 @@ val user =  User(emailTextInput?.text.toString(), passwordTextInput?.text.toStri
                             else Toast.makeText(applicationContext, "User exists", Toast.LENGTH_LONG).show()
                         }
                     })
-            } else{
-                Toast.makeText(this, "Password doesn't match", Toast.LENGTH_LONG).show()
             }
+            else Toast.makeText(this, "Password doesn't match", Toast.LENGTH_LONG).show()
+            }else Toast.makeText(this, "Email is invalid", Toast.LENGTH_LONG).show()
         }
         backbtn?.setOnClickListener{
             Handler(Looper.getMainLooper()).postDelayed({
@@ -75,7 +77,10 @@ val user =  User(emailTextInput?.text.toString(), passwordTextInput?.text.toStri
             }, 1000)
         }
     }
-
+    private fun isEmailValid(email: String): Boolean {
+        val EMAIL_REGEX = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})";
+        return EMAIL_REGEX.toRegex().matches(email);
+    }
 
 }
 //data class UserResponse(val results: List<User>)
