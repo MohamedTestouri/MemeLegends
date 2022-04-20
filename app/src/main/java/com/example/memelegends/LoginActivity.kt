@@ -45,26 +45,39 @@ class LoginActivity : AppCompatActivity() {
             .build()
             .create(UserInterface::class.java)
 
-        loginbtn?.setOnClickListener{
-            val user =  User(Emailtxt?.text.toString(), Pwtxt?.text.toString())
-            service.login(user).enqueue(object: Callback<UserResponse> {
+        loginbtn?.setOnClickListener {
+            val user = User(Emailtxt?.text.toString(), Pwtxt?.text.toString())
+           if( isEmailValid(Emailtxt?.text.toString())){
+               if (Pwtxt?.text.toString().length>=8){
+            service.login(user).enqueue(object : Callback<UserResponse> {
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                    Log.d("TAG_", "An error happened!"+t)
+                    Log.d("TAG_", "An error happened!" + t)
                     t.printStackTrace()
-                    Toast.makeText(applicationContext, "User doesn't exist", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, "User doesn't exist", Toast.LENGTH_LONG)
+                        .show()
                 }
-                override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
+
+                override fun onResponse(
+                    call: Call<UserResponse>,
+                    response: Response<UserResponse>
+                ) {
                     /* This will print the response of the network call to the Logcat */
                     Log.d("TAG_", response.code().toString())
-if (response.code() == 200) {
-    Handler(Looper.getMainLooper()).postDelayed({
-        val mainIntent = Intent(applicationContext, NewsPage::class.java)
-        startActivity(mainIntent)
-        finish()
-    }, 1000)
-} else Toast.makeText(applicationContext, "User doesn't exist", Toast.LENGTH_LONG).show()
+                    if (response.code() == 200) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val mainIntent = Intent(applicationContext, NewsPage::class.java)
+                            startActivity(mainIntent)
+                            finish()
+                        }, 1000)
+                    } else Toast.makeText(
+                        applicationContext,
+                        "User doesn't exist",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             })
+               } else Toast.makeText(this, "Password is too short", Toast.LENGTH_LONG).show()
+        } else Toast.makeText(this, "Email is invalid", Toast.LENGTH_LONG).show()
         }
 
         signbtn?.setOnClickListener{
@@ -75,5 +88,10 @@ if (response.code() == 200) {
             }, 1000)
         }
 
+    }
+
+    private fun isEmailValid(email: String): Boolean {
+            val EMAIL_REGEX = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})";
+            return EMAIL_REGEX.toRegex().matches(email);
     }
 }

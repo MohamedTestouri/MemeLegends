@@ -24,8 +24,8 @@
         android:layout_marginTop="52dp"
         android:backgroundTint="#CAB843"
         android:ems="10"
+        android:hint="Email@example.com"
         android:inputType="textPersonName"
-        android:text="Email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
@@ -37,8 +37,9 @@
         android:layout_marginTop="48dp"
         android:backgroundTint="#D8D263"
         android:ems="10"
+        android:hint="Password"
         android:inputType="textPersonName"
-        android:text="Password"
+        android:password="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Emailtxt" />
